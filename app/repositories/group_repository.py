@@ -1,9 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.models import User
 from app.repositories import SQLAlchemyRepository
 
+from app.models import Group
 
-class UserRepository(SQLAlchemyRepository):
+
+class GroupRepository(SQLAlchemyRepository):
+
     def __init__(self, session: AsyncSession):
-        super().__init__(session=session, model=User)
+        super().__init__(session=session, model=Group)

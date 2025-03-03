@@ -1,8 +1,7 @@
 import asyncio
 
 from app.core.database import engine
-from app.models import Message, Group, Chat
-from app.models.user_model import User, Base
+from app.models.user_model import Base
 
 
 async def create_tables():

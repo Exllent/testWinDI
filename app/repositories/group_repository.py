@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.repositories import SQLAlchemyRepository
+from app.repositories.repository import SQLAlchemyRepository
 
 from app.models import Group
 

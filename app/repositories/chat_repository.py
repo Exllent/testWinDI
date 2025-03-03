@@ -1,7 +1,7 @@
-from sqlalchemy import select, column, exists
+from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories import SQLAlchemyRepository
+from app.repositories.repository import SQLAlchemyRepository
 from app.models import Chat, Group
 
 

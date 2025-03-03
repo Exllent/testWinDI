@@ -1,19 +1,18 @@
 from collections import defaultdict
+from typing import DefaultDict
 
 from fastapi import WebSocket
 
 
 class WebSocketManager:
     _instance = None
+    active_connections: DefaultDict[int, DefaultDict[int, list[WebSocket]]]
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *_args, **_kwargs):
         if not cls._instance:
             cls._instance = super(WebSocketManager, cls).__new__(cls)
             cls._instance.active_connections = defaultdict(lambda: defaultdict(list))
         return cls._instance
-
-    # def __init__(self):
-    #     self.active_connections: dict[int, dict[int, list[WebSocket]]] = defaultdict(lambda: defaultdict(list))
 
     async def connect(self, chat_id: int, user_id: int, websocket: WebSocket) -> None:
         await websocket.accept()

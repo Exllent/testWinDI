@@ -6,8 +6,8 @@ from app.core import Base
 
 
 class ChatTypeEnum(str, enum.Enum):
-    personal = "personal"
-    group = "group"
+    personal = "personal"  # pylint: disable=C0103
+    group = "group"  # pylint: disable=C0103
 
 
 class Chat(Base):

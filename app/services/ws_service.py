@@ -20,10 +20,10 @@ class WebSocketService:
             return await self._create_person_message(msg_data=msg_data)
         except SQLAlchemyError as e:
             logger.error(
-                f"Database error while creating message or group message: {str(e)}\n"
-                f"message_data={msg_data}\n"
-                f"chat_type={chat_type}\n"
-                f"user_id={self.user_id}"
+                "Database error while creating message or group message: %s\n"
+                "message_data=%s\n"
+                "chat_type=%s\n"
+                "user_id=%s", str(e), msg_data, chat_type, self.user_id
             )
             raise InternalServerErrorException(
                 "An internal error occurred. Please try again later.",

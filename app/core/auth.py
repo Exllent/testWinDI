@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from starlette.websockets import WebSocket
 
-from app.core import auth_config
+from app.core.config import auth_config
 from app.exceptions import credentials_exception
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")

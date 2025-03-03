@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, WebSocket, Depends, WebSocketDisconnect
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import ws_get_current_user_id, get_db
+from app.core import ws_get_current_user_id, get_db, logger
 from app.ws_manager import WebSocketManager
 from app.repositories import ChatRepository
 from app.services import WebSocketService
@@ -24,8 +24,6 @@ async def websocket_endpoint(
         db: AsyncSession = Depends(get_db)
 ):
     result = await ChatRepository(session=db).get_type_with_user_auth(chat_id=chat_id, user_id=user_id)
-    print(result)
-    print(user_id)
     if result is None:
         await websocket.close(code=1008)
         return
@@ -39,14 +37,17 @@ async def websocket_endpoint(
             message_data = {"msg": text, "uid": user_id, "msg_id": msg_id}
             await ws_manager.send_to_others(chat_id=chat_id, message=message_data, websocket=websocket)
         except CreateMessageException:
-            print('exception')
+            message_data = {"reason": "error", "msg": "error creating msg. try again"}
+            await ws_manager.notify_sender(chat_id=chat_id, sender_id=user_id, message=message_data)
             continue
 
         except WebSocketDisconnect as e:
+            logger.debug("WebSocket disconnected: chat_id=%s, user_id=%s, error=%s", chat_id, user_id, str(e))
             ws_manager.disconnect(chat_id=chat_id, user_id=user_id, websocket=websocket)
             break
 
-        except (WebSocketDisconnect, CreateBalkMessageException, InternalServerErrorException) as e:
+        except (CreateBalkMessageException, InternalServerErrorException) as e:
+            logger.error("WebSocket error: chat_id=%s, user_id=%s, error=%s", chat_id, user_id, str(e), exc_info=True)
             await websocket.close(code=e.status_code)
             ws_manager.disconnect(chat_id=chat_id, user_id=user_id, websocket=websocket)
             break

@@ -6,7 +6,7 @@ from fastapi_pagination import Params
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import logger
+from app.core.logging_config import logger
 from app.repositories import MessageRepository
 from app.models import Message, MessageReadStatus, ChatTypeEnum
 from app.exceptions import (
@@ -95,9 +95,9 @@ class MessageService:
             return message_data
         except SQLAlchemyError as e:
             logger.error(
-                f"Database error while update read status for msg: {str(e)}\n"
-                f"message_id={message_id}\n"
-                f"user_id={self.user_id}"
+                "Database error while update read status for msg: %s\n"
+                "message_id=%s\n"
+                "user_id=%s", str(e), message_id, self.user_id
             )
             raise InternalServerErrorException(
                 "An internal error occurred. Please try again later.",

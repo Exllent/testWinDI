@@ -47,10 +47,10 @@ class ChatService:
                 return chat_id
             except SQLAlchemyError as e:
                 logger.error(
-                    f"Database error while creating group chat: {str(e)}\n"
-                    f"chat_data={chat_data}\n"
-                    f"group_data={group_data}\n"
-                    f"user_id={self.user_id}"
+                    "Database error while creating group chat: %s\n"
+                    "chat_data=%s\n"
+                    "group_data=%s\n"
+                    "user_id=%s", str(e), chat_data, group_data, self.user_id
                 )
                 await self.session.rollback()
                 raise InternalServerErrorException(

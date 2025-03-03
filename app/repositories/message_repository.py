@@ -3,7 +3,7 @@ from typing import Self, Union
 from sqlalchemy import select, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories import SQLAlchemyRepository
+from app.repositories.repository import SQLAlchemyRepository
 from app.models import Message, MessageReadStatus, Chat
 
 
@@ -51,8 +51,8 @@ class MessageRepository(SQLAlchemyRepository[Union[Message, MessageReadStatus]])
     @staticmethod
     def _get_unread_count_subquery(message_id: int):
         return (
-            select(func.count().label("unread_count")).
-            where((MessageReadStatus.message_id == message_id) & (MessageReadStatus.has_read != True)).
+            select(func.count().label("unread_count")).  # pylint: disable=E1102
+            where((MessageReadStatus.message_id == message_id) & (MessageReadStatus.has_read.isnot(True))).
             scalar_subquery().
             label("unread_count")
         )

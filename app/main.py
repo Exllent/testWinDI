@@ -1,8 +1,19 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, APIRouter
 from fastapi_pagination import add_pagination
 from app.api import auth_router, ws_router, user_router, chat_router, message_router
+from app.core.database import engine, Base
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 add_pagination(app)
 
 api_router = APIRouter(prefix="/api/v1")

@@ -26,11 +26,10 @@ ws_manager = WebSocketManager()
 async def get_messages(
         chat_id: int,
         params: Params = Depends(),
-        timestamp: datetime = datetime.now(tz=timezone.utc),
         user_id: int = Depends(get_current_user_id),
         db: AsyncSession = Depends(get_db),
 ) -> Page[MessageResponse]:
-    data = await MessageService(user_id, db=db).get_message(chat_id, params, timestamp)
+    data = await MessageService(user_id, db=db).get_message(chat_id, params)
     return Page(**data)
 
 

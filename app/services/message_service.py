@@ -1,5 +1,5 @@
 from typing import Self, NamedTuple, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import status
 from fastapi_pagination import Params
@@ -104,13 +104,13 @@ class MessageService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-    async def get_message(self: Self, chat_id: int, params: Params, timestamp: datetime) -> dict:
+    async def get_message(self: Self, chat_id: int, params: Params) -> dict:
         limit = params.size
         offset = (params.page - 1) * params.size
         message_repository = MessageRepository(session=self.session)
         query_data = {
             "chat_id": chat_id,
-            "timestamp": timestamp.replace(tzinfo=None),
+            "timestamp": datetime.now(tz=timezone.utc),
             "order_by": "timestamp",
             "offset": offset,
             "limit": limit

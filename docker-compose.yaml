@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  backend:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app.log:/app.log
+
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 2G
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    env_file: .env
+    networks:
+      - app-network
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
+    driver: local
+
+
+networks:
+  app-network:
+    driver: bridge
